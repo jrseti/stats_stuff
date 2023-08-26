@@ -86,8 +86,9 @@ if __name__== "__main__":
 	for name_list in names:
 		print ("%s: %d" % (name_list[1], name_to_num(name_list[1])))
 
-	t = ["CHICAGO", "ATL"]
+	t = ["CHICAGO", "WSH"]
 	print (team_name_list_to_num_list(t))
+	print("WSH: %d" % name_to_num("WSH"))
 		
 
 	
