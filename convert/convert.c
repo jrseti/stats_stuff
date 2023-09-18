@@ -76,10 +76,10 @@ TeamData *data;
 
 int GetTeamCount();
 void GetSchedule();
-void GetScores();
+void GetScores(char *statsdir);
 void read_in_convert_data();
-void WriteNewScoresFile();
-void WriteNewStatFile();
+void WriteNewScoresFile(char *statsdir);
+void WriteNewStatFile(char *statsdir);
 
 /***************************************************/
 /* This is the main routine.  Live long and enjoy. */
@@ -98,6 +98,16 @@ unsigned int main(argc, argv)
   int   jstart,jstop;
 
   int d;
+
+  char statsdir[256];
+
+  // Get the env variable STATSDIR, if NULL print error and return
+  if(getenv("STATSDIR")==NULL)
+  {
+    printf("ERROR: STATSDIR environment variable not set.\n");
+    exit(0);
+  }
+  strcpy(statsdir,getenv("STATSDIR"));
 
   /****************************************/
   /* Print out help message if necessary. */
@@ -122,12 +132,12 @@ unsigned int main(argc, argv)
   week = atoi(argv[2]);
 
 
-  sprintf(input_filename,"../stats/%d/Week%02d/entirestats.txt",year,week);
+  sprintf(input_filename,"%s/%d/Week%02d/entirestats.txt",statsdir, year,week);
 
   /************************/
   /* Open the trace file. */
   /************************/
-  sprintf(temp_filename,"../stats/%d/Week%02d/trace.txt",year,week);
+  sprintf(temp_filename,"%s/%d/Week%02d/trace.txt",statsdir, year,week);
   fp_trace = fopen(temp_filename, "w");
   //fp_trace = stdout;
 
@@ -191,7 +201,7 @@ unsigned int main(argc, argv)
   /* specified in the command line.                         */
   /**********************************************************/
 //printf("\nHERE 21");getchar();
-  sprintf(input_filename, "stats/%d/Week%02d/entirestats.txt",year,week);
+  sprintf(input_filename, "%s/%d/Week%02d/entirestats.txt",statsdir,year,week);
   if (NULL == (fp_in = fopen(input_filename, "r")))
     {
       fprintf(fp_trace,"\nCould not open the file \"%s\"",input_filename);
@@ -292,7 +302,7 @@ printf("\nHERE 3");
 //printf("\nHERE 6");
   GetSchedule();
 //printf("\nHERE 7");
-  GetScores();
+  GetScores(statsdir);
 //printf("\nHERE 8");  
   read_in_convert_data();
 //printf("\nHERE 9");
@@ -658,7 +668,7 @@ fprintf(fp_trace,"Data team %d, var %d = %f\n",info.torder[i]+1,info.vorder[m]+1
   /* Open the out file. */
   /**********************/
 
-  sprintf(temp_filename,"stats/%d/out",year);
+  sprintf(temp_filename,"%s/%d/out", statsdir, year);
   if (NULL == (fp_out = fopen(temp_filename, "w")))
     {
       fprintf(fp_trace,"\nCould not open the file \"out\"");
@@ -822,7 +832,7 @@ fprintf(fp_trace,"Data team %d, var %d = %f\n",info.torder[i]+1,info.vorder[m]+1
 	}
 	else
 	{
-		fprintf(fp_out,"%2d%2d%2d%6.0f%6.0f%6.0f%6.0f%6.0f%6.0f%6.0f%6.0f%6.0f%6.0f%6.0f%3s %02d 1\n",
+		fprintf(fp_out,"%2d%2d%2d%6.0f%6.0f%6.0f%6.0f%6.0f%6.0f%6.0f%6.0f%6.0f%6.0f%6.0f%3s %02d 1\r\n",
 		data[i].w,data[i].l,data[i].t,
 		data[i].v[1],
 		data[i].v[2],data[i].v[3],data[i].v[4],data[i].v[5],
@@ -835,7 +845,7 @@ fprintf(fp_trace,"Data team %d, var %d = %f\n",info.torder[i]+1,info.vorder[m]+1
 		info.tnam[i],
 		info.year-2000);
 	}
-      fprintf(fp_out,"%6.0f%6.0f%6.0f%6.0f%6.0f%6.0f%6.0f%6.0f%6.0f%6.0f%6.0f%6.0f%3s %02d 2\n",
+      fprintf(fp_out,"%6.0f%6.0f%6.0f%6.0f%6.0f%6.0f%6.0f%6.0f%6.0f%6.0f%6.0f%6.0f%3s %02d 2\r\n",
 	data[i].v[9],
 	data[i].v[10],
 	data[i].v[11],
@@ -851,7 +861,7 @@ fprintf(fp_trace,"Data team %d, var %d = %f\n",info.torder[i]+1,info.vorder[m]+1
 	info.tnam[i],
 	info.year-2000);
 
-      fprintf(fp_out,"%6.0f%6.0f%6.0f%6.0f%6.0f%6.0f%6.0f%6.0f%6.0f%6.0f%6.0f%6.0f%3s %02d 3\n",
+      fprintf(fp_out,"%6.0f%6.0f%6.0f%6.0f%6.0f%6.0f%6.0f%6.0f%6.0f%6.0f%6.0f%6.0f%3s %02d 3\r\n",
 	data[i].v[21],
 	data[i].v[22],
 	data[i].v[23],
@@ -867,7 +877,7 @@ fprintf(fp_trace,"Data team %d, var %d = %f\n",info.torder[i]+1,info.vorder[m]+1
 	info.tnam[i],
 	info.year-2000);
 
-      fprintf(fp_out,"%6.0f%6.0f%6.0f%6.0f%6.0f%6.0f%6.0f%6.0f%6.0f%6.0f%6.0f%6.0f%3s %02d 4\n",
+      fprintf(fp_out,"%6.0f%6.0f%6.0f%6.0f%6.0f%6.0f%6.0f%6.0f%6.0f%6.0f%6.0f%6.0f%3s %02d 4\r\n",
 	data[i].v[33],
 	data[i].v[34],
 	data[i].v[35],
@@ -883,7 +893,7 @@ fprintf(fp_trace,"Data team %d, var %d = %f\n",info.torder[i]+1,info.vorder[m]+1
 	info.tnam[i],
 	info.year-2000);
 
-      fprintf(fp_out,"%6.0f%6.0f%6.0f%6.0f%6.0f%6.0f%6.0f%6.0f%6.0f%6.0f%6.0f%6.0f%3s %02d 5\n",
+      fprintf(fp_out,"%6.0f%6.0f%6.0f%6.0f%6.0f%6.0f%6.0f%6.0f%6.0f%6.0f%6.0f%6.0f%3s %02d 5\r\n",
 	data[i].v[45],
 	data[i].v[46],
 	data[i].v[47],
@@ -900,7 +910,7 @@ fprintf(fp_trace,"Data team %d, var %d = %f\n",info.torder[i]+1,info.vorder[m]+1
 	info.year-2000);
 
 
-      fprintf(fp_out,"%6.0f%6.0f%6.0f%6.0f%6.0f%6.0f%6.0f%6.0f%6.0f%6.0f%6.0f%6.0f%3s %02d 6\n",
+      fprintf(fp_out,"%6.0f%6.0f%6.0f%6.0f%6.0f%6.0f%6.0f%6.0f%6.0f%6.0f%6.0f%6.0f%3s %02d 6\r\n",
 	data[i].v[54],
 	data[i].v[55],
 	data[i].v[56],
@@ -916,7 +926,7 @@ fprintf(fp_trace,"Data team %d, var %d = %f\n",info.torder[i]+1,info.vorder[m]+1
 	info.tnam[i],
 	info.year-2000);
 
-      fprintf(fp_out,"%6.0f%6.0f%6.0f  %4s%51s %02d 7\n",
+      fprintf(fp_out,"%6.0f%6.0f%6.0f  %4s%51s %02d 7\r\n",
 	data[i].v[67],
 	data[i].v[68],
 	data[i].v[69],
@@ -931,8 +941,8 @@ fprintf(fp_trace,"Data team %d, var %d = %f\n",info.torder[i]+1,info.vorder[m]+1
   /**********/
   fclose(fp_out);
 
-  WriteNewScoresFile();
-  WriteNewStatFile();
+  WriteNewScoresFile(statsdir);
+  WriteNewStatFile(statsdir);
 
   fprintf(fp_trace,"\nConvert Finished!\n\nThank You!");
   printf("\nConvert Finished. \n\nThank you!");
@@ -1162,6 +1172,7 @@ void GetSchedule()
   char *string;
   char *p;
   int first;
+  char schedsdir[256];
 
   /*************/
   /* Allocate. */
@@ -1175,6 +1186,19 @@ void GetSchedule()
 
   printf("\r\nOpening scheds");
   //Sleep(2000);
+
+  //Get the scheds directory env variable only if not null
+  if (NULL == (p = getenv("SCHEDSDIR")))
+  {
+    printf("\nIn GetSchedule(). Could not get the SCHEDSDIR environment variable. Exiting\n\n");
+    free(string);
+    exit(0);
+  }
+  else
+  {
+    strcpy(schedsdir, p);
+  }
+  
   sprintf(string,"scheds/sched_%d.txt",info.year);
   if (NULL == (fp = fopen(string, "r")))
     {
@@ -1241,7 +1265,7 @@ void GetSchedule()
 /*********************************/
 /*********************************/
 
-void GetScores()
+void GetScores(char *statsdir)
 {
   FILE *fp;
   int  i,j;
@@ -1259,7 +1283,7 @@ void GetScores()
   /* Open the scores file. */
   /*************************/
 
-  sprintf(temp_filename,"stats/%d/scores.txt",year);
+  sprintf(temp_filename,"%s/%d/scores.txt",statsdir,year);
   if (NULL == (fp = fopen(temp_filename, "r")))
   {
     printf("\nIn GetScores(). Could not open the file %s", temp_filename);
@@ -1350,7 +1374,7 @@ void GetScores()
 /*********************************/
 /*********************************/
 
-void WriteNewScoresFile()
+void WriteNewScoresFile(char *statsdir)
 {
   FILE *fp;
   int  i,j,k,first;
@@ -1368,10 +1392,10 @@ void WriteNewScoresFile()
   /*************************/
 
   /* Save the old one. */
-  sprintf(string,"cp stats/%d/scores.txt stats/%d/scores%d.txt",
-	  info.year,info.year,info.week-1);
+  sprintf(string,"cp %s/%d/scores.txt %s/%d/scores%d.txt",
+	  statsdir,info.year,statsdir,info.year,info.week-1);
 
-  sprintf(string,"stats/%d/scores.txt",info.year);
+  sprintf(string,"%s/%d/scores.txt",statsdir,info.year);
 
   if (NULL == (fp = fopen(string, "w")))
   {
@@ -1394,7 +1418,7 @@ void WriteNewScoresFile()
   for(i=0;i<info.week-1;i++)
     for(j=0;j<info.team_count-1;j++)
       {
-	if((j%12==0)&&(first))fprintf(fp,"\n");
+	if((j%12==0)&&(first))fprintf(fp,"\r\n");
 	first = 1;
 
 	/* Total up all the scores. */
@@ -1418,7 +1442,7 @@ void WriteNewScoresFile()
   i = info.week-1;
   for(j=0;j<info.team_count-1;j++)
     {
-      if((j%12==0)&&(first))fprintf(fp,"\n");
+      if((j%12==0)&&(first))fprintf(fp,"\r\n");
       first = 1;
       if((int)abs(info.sched[j][i])==0)
       {
@@ -1449,7 +1473,7 @@ for(i=0;i<32;i++)
 /*****************************/
 /*****************************/
 
-void WriteNewStatFile()
+void WriteNewStatFile(char *statsdir)
 
 {
   long int i;
@@ -1467,17 +1491,17 @@ void WriteNewStatFile()
   /*************************/
 
   /* Save the old one. */
-  sprintf(string,"cp stats/%d/stats.txt stats/%d/stats.old",
-	  info.year,info.year);
+  sprintf(string,"cp %s/%d/stats.txt %s/%d/stats.old",
+	  statsdir,info.year,statsdir, info.year);
   system(string);
 
   /* Copy OUT to stats file. */
-  sprintf(string,"cp stats/%d/out stats/%d/%02dsummar.txt",
-	  info.year,info.year,info.year-2000);
+  sprintf(string,"cp %s/%d/out %s/%d/%02dsummar.txt",
+	  statsdir,info.year,statsdir,info.year,info.year-2000);
   system(string);
 
   /* Open the stats file. */
-  sprintf(string,"stats/%d/stats.txt",info.year);
+  sprintf(string,"%s/%d/stats.txt",statsdir,info.year);
   if (NULL == (fp_new = fopen(string, "w+t")))
     {
       printf("\nIn WriteNewStatFile(). Could not open the file %s",
@@ -1490,7 +1514,7 @@ void WriteNewStatFile()
   /****************************/
   /* Open the old stat file.  */
   /****************************/
-  sprintf(string,"stats/%d/stats.old",info.year);
+  sprintf(string,"%s/%d/stats.old",statsdir,info.year);
   if(info.week != 1)
   {
 	  if (NULL == (fp_old = fopen(string, "r")))
@@ -1531,11 +1555,11 @@ void WriteNewStatFile()
   /* Append out to 9495stat. */
   /***************************/
 
-  sprintf(string,"cat stats/%d/stats.txt stats/%d/out >> stats/%d/stats.txt",
-	  info.year,info.year,info.year);
+  sprintf(string,"cat %s/%d/stats.txt %s/%d/out >> %s/%d/stats.txt",
+	  statsdir, info.year, statsdir, info.year, statsdir, info.year);
   system(string);
 
-  sprintf(string,"rm stats/%d/out",info.year);
+  sprintf(string,"rm %s/%d/out", statsdir, info.year);
   system(string);
 
   /*******************/
