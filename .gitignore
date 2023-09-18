@@ -162,3 +162,4 @@ cython_debug/
 bud/
 stats/
 config.py
+zipped_code/

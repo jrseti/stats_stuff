@@ -122,12 +122,12 @@ unsigned int main(argc, argv)
   week = atoi(argv[2]);
 
 
-  sprintf(input_filename,"stats/%d/Week%02d/entirestats.txt",year,week);
+  sprintf(input_filename,"../stats/%d/Week%02d/entirestats.txt",year,week);
 
   /************************/
   /* Open the trace file. */
   /************************/
-  sprintf(temp_filename,"stats/%d/Week%02d/trace.txt",year,week);
+  sprintf(temp_filename,"../stats/%d/Week%02d/trace.txt",year,week);
   fp_trace = fopen(temp_filename, "w");
   //fp_trace = stdout;
 
