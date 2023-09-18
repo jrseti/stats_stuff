@@ -106,8 +106,17 @@ int CBudGraphClass::ReadInSchedule(int year,int data[NUM_TEAMS][NUM_WEEKS])
 	char string[256];
 	int  i,j;
 	char *dummy;
+	char schedsdir[256];
 
-	sprintf(filename,"../scheds/sched_%d.txt", year);
+	//Get the SCHEDSDIR env variable. If it doesn't exist, exit.
+	if(getenv("SCHEDSDIR")==NULL)
+	{
+		printf("SCHEDSDIR environment variable not set.\r\n");
+		return(0);
+	}
+	strcpy(schedsdir,getenv("SCHEDSDIR"));
+
+	sprintf(filename,"%s/sched_%d.txt", schedsdir, year);
 
 	fp = fopen(filename,"r");
 	
@@ -432,10 +441,11 @@ void CBudGraphClass::GetWeekData(int team_num,int var_num, float *data)
 {
 
 	FILE	*fp;
-	char	filename[256];
+	char	filename[1024];
 	int		i,j,k;
 	float	VO[75][NUM_TEAMS],VN[75],V[201];
 	float	VOtemp[75],VOld[75][NUM_TEAMS];
+	char    statsdir[256];
 	
 	/******************************/
 	/* Read in this year to date. */
@@ -445,7 +455,14 @@ void CBudGraphClass::GetWeekData(int team_num,int var_num, float *data)
 		for(j=0;j<NUM_TEAMS;j++)
 			VO[i][j]=0.0;
 
-	sprintf(filename,"../stats/%d/stats.txt",m_this_year);
+	//Get the STATSDIR env variable. If it doesn't exist, exit.
+	if(getenv("STATSDIR")==NULL)
+	{
+		printf("STATSDIR environment variable not set.\r\n");
+		return(0);
+	}
+	strcpy(statsdir,getenv("STATSDIR"));
+	sprintf(filename,"%s/%d/stats.txt", statsdir, m_this_year);
 	fp = fopen(filename,"r");
 	if(!fp)
 	{

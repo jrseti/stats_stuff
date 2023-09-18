@@ -2,6 +2,7 @@
 
 #include "BudGraphClass.h"
 #include <string>
+#include <string.h>
 
 using namespace std;
 
@@ -31,10 +32,16 @@ int main(int argc, char *argv[])
 
 	string team_data = weekly_team_data;
 	string team_number;
+    char statsdir[256];
  
     // Print weekly_team_data
-    
-    sprintf(s, "../stats/%d/Week%02d/week%d.sql", year, week, week);
+    //Get the STATSDIR env variable. If it doesn't exist, exit.
+    if (getenv("STATSDIR") == NULL) {
+        printf("STATSDIR environment variable not set. Exiting.\n");
+        exit(1);
+    }
+    strcpy(statsdir, getenv("STATSDIR"));
+    sprintf(s, "%s/%d/Week%02d/week%d.sql", statsdir, year, week, week);
     fp = fopen(s, "w");
 
     for(int teams = 0 ; teams < 32 ; teams++) {
