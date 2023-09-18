@@ -163,3 +163,8 @@ bud/
 stats/
 config.py
 zipped_code/
+.vscode/
+bin/
+weekly2db/WeeklyDataDlg.cpp
+weekly2db/WeeklyDataDlg.h
+do
