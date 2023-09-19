@@ -51,7 +51,14 @@ int main(int argc, char *argv[])
 
         for(int var = 0 ; var < 200 ; var++) {
 
-            sprintf(s,"%.2f",(double)budClass->m_w_vars[teams][week-1][var]);
+            if(week == 1) {
+                sprintf(s,"%.2f",(double)budClass->m_w_vars[teams][week-1][var]);
+            }
+            else {
+                if(var == 9)
+                printf("%f, %f\r\n", (double)budClass->m_w_vars[teams][week-1][var], (double)budClass->m_w_vars[teams][week-2][var]);
+                sprintf(s,"%.2f",(double)budClass->m_w_vars[teams][week-1][var] - (double)budClass->m_w_vars[teams][week-2][var]);
+            }
             team_data += s;
 			
 			if(var < 199) {
