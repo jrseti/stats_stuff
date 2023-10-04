@@ -16,7 +16,7 @@ def get_report(year, week):
 	return text
 
 def parse_leaders(line):
-
+	#print(line)
 	leaders = []
 
 	line = line.replace("AND", "")
@@ -41,13 +41,19 @@ def parse_leaders(line):
 def parse_wildcards(line):
 
 	wildcards = []
+ 
+	parts = line.split('ARE')
+	parts = parts[1].split('AND')
+	wildcards.append(parts[0].strip())
+	wildcards.append(parts[1].strip())
+ 
 
-	line = line.replace(" AND ", ",");
+	"""line = line.replace(" AND ", ",");
 	i = line.index(" ARE ") + 4;
 	j = line.index(',');
 	print(i,j)
 	wildcards.append(line[i+1:j].strip());
-	wildcards.append(line[j+1:-1].strip());
+	wildcards.append(line[j+1:-1].strip());"""
 
 	print(wildcards)
 
@@ -125,25 +131,25 @@ class PredictPost:
 				print("SUPERBOWL CHAMP: " + self.super_bowl_champ + ", Winning margin: " + self.winning_margin)
 
 	def to_sql(self):
-    		sql = "insert into predict_post set year=" + str(self.year) + ", week=" + str(int(week) + 1);
-    		sql += ", nfc_leader1=" + str(teams.name_to_num(self.nfc_leaders[0]));
-    		sql += ", nfc_leader2=" + str(teams.name_to_num(self.nfc_leaders[1]));
-    		sql += ", nfc_leader3=" + str(teams.name_to_num(self.nfc_leaders[2]));
-    		sql += ", nfc_leader4=" + str(teams.name_to_num(self.nfc_leaders[3]));
-    		sql += ", afc_leader1=" + str(teams.name_to_num(self.afc_leaders[0]));
-    		sql += ", afc_leader2=" + str(teams.name_to_num(self.afc_leaders[1]));
-    		sql += ", afc_leader3=" + str(teams.name_to_num(self.afc_leaders[2]));
-    		sql += ", afc_leader4=" + str(teams.name_to_num(self.afc_leaders[3]));
-    		sql += ", nfc_wildcard1=" + str(teams.name_to_num(self.nfc_wildcards[0]));
-    		sql += ", nfc_wildcard2=" + str(teams.name_to_num(self.nfc_wildcards[1]));
-    		sql += ", afc_wildcard1=" + str(teams.name_to_num(self.afc_wildcards[0]));
-    		sql += ", afc_wildcard2=" + str(teams.name_to_num(self.afc_wildcards[1]));
-    		sql += ", nfc_superbowl=" + str(teams.name_to_num(self.nfc_superbowl));
-    		sql += ", afc_superbowl=" + str(teams.name_to_num(self.afc_superbowl));
-    		sql += ", super_bowl_champ=" + str(teams.name_to_num(self.super_bowl_champ));
-    		sql += ", super_bowl_champ_winning_margin=" + self.winning_margin + ";";
+		sql = "insert into predict_post set year=" + str(self.year) + ", week=" + str(int(week) + 1);
+		sql += ", nfc_leader1=" + str(teams.name_to_num(self.nfc_leaders[0]));
+		sql += ", nfc_leader2=" + str(teams.name_to_num(self.nfc_leaders[1]));
+		sql += ", nfc_leader3=" + str(teams.name_to_num(self.nfc_leaders[2]));
+		sql += ", nfc_leader4=" + str(teams.name_to_num(self.nfc_leaders[3]));
+		sql += ", afc_leader1=" + str(teams.name_to_num(self.afc_leaders[0]));
+		sql += ", afc_leader2=" + str(teams.name_to_num(self.afc_leaders[1]));
+		sql += ", afc_leader3=" + str(teams.name_to_num(self.afc_leaders[2]));
+		sql += ", afc_leader4=" + str(teams.name_to_num(self.afc_leaders[3]));
+		sql += ", nfc_wildcard1=" + str(teams.name_to_num(self.nfc_wildcards[0]));
+		sql += ", nfc_wildcard2=" + str(teams.name_to_num(self.nfc_wildcards[1]));
+		sql += ", afc_wildcard1=" + str(teams.name_to_num(self.afc_wildcards[0]));
+		sql += ", afc_wildcard2=" + str(teams.name_to_num(self.afc_wildcards[1]));
+		sql += ", nfc_superbowl=" + str(teams.name_to_num(self.nfc_superbowl));
+		sql += ", afc_superbowl=" + str(teams.name_to_num(self.afc_superbowl));
+		sql += ", super_bowl_champ=" + str(teams.name_to_num(self.super_bowl_champ));
+		sql += ", super_bowl_champ_winning_margin=" + self.winning_margin + ";";
 
-    		return sql;
+		return sql;
 
 
 class PredictInfo:
@@ -186,12 +192,12 @@ class PredictInfo:
 		sql += ";"
 
 	
-		return sql;
+		return sql
 
 if __name__== "__main__":
 
 	if len(sys.argv) != 3 :
-		print(f'Syntax: {argv[0]} <year> <week>')
+		print(f'Syntax: {sys.argv[0]} <year> <week>')
 		sys.exit(1)
 
 	
@@ -232,16 +238,16 @@ if __name__== "__main__":
 			line = line.strip()[3:-1]
 
 			if line.startswith(tname) and line.find("PREDICTED") > -1:
-				pi = PredictInfo(year, week, tnum, line2, line);
+				pi = PredictInfo(year, week, tnum, line2, line)
 				file.write(pi.to_sql() + "\n")
 
-			line2 = line1;
-			line1 = line;
+			line2 = line1
+			line1 = line
 			
 
 	file.write(pp.to_sql())
 	file.close()
 
-	print(f"Predictions for {year} week {week} written to {filepath}")
+	print(f"Predictions for {year} week {week+1} written to {filepath}")
 
 
