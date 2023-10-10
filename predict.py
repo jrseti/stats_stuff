@@ -1,4 +1,4 @@
-#!/home/jrseti/stats_stuff/bud/bin/python
+#!/usr/bin/env python
   
 import sys
 import os
