@@ -4,6 +4,7 @@ import sys
 import os
 
 import teams
+from config import PREDICT_SCP_CMD, PREDICT_DB_CMD_1, PREDICT_DB_CMD_2, PREDICT_DB_CMD_3
 
 debug = True
 
@@ -249,5 +250,21 @@ if __name__== "__main__":
 	file.close()
 
 	print(f"Predictions for {year} week {week+1} written to {filepath}")
+ 
+	print("\nCopying to database")
+	cmd = PREDICT_SCP_CMD.replace("PREDICT_FILE", filepath)
+	print(cmd)
+	os.system(cmd)
+	cmd = PREDICT_DB_CMD_1.replace("PREDICT_YEAR", str(year))
+	cmd = cmd.replace("PREDICT_WEEK", str(week+1))
+	print(cmd)
+	os.system(cmd)
+	cmd = PREDICT_DB_CMD_2.replace("PREDICT_YEAR", str(year))
+	cmd = cmd.replace("PREDICT_WEEK", str(week+1))
+	print(cmd)
+	os.system(cmd)
+	cmd = PREDICT_DB_CMD_3
+	print(cmd)
+	os.system(cmd)
 
 
