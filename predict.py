@@ -2,6 +2,7 @@
   
 import sys
 import os
+import re
 
 import teams
 from config import PREDICT_SCP_CMD, PREDICT_DB_CMD_1, PREDICT_DB_CMD_2, PREDICT_DB_CMD_3
@@ -48,16 +49,6 @@ def parse_wildcards(line):
 	wildcards.append(parts[0].strip())
 	wildcards.append(parts[1].strip())
  
-
-	"""line = line.replace(" AND ", ",");
-	i = line.index(" ARE ") + 4;
-	j = line.index(',');
-	print(i,j)
-	wildcards.append(line[i+1:j].strip());
-	wildcards.append(line[j+1:-1].strip());"""
-
-	print(wildcards)
-
 	return wildcards
 
 class PredictPost:
@@ -82,52 +73,55 @@ class PredictPost:
 		line = line.replace(",", "")
 
 		#if "THE MOST LIKELY NFC LEADERS ARE:" in line:
-		if(line.find("THE MOST LIKELY NFC LEADERS ARE:") > -1):
+		if "THE MOST LIKELY NFC LEADERS ARE:" in line:
 			self.nfc_leaders = parse_leaders(line)
 			if(debug == True):
-      				print("NFC_LEADERS: |" + self.nfc_leaders[0] + "|")
-      				print("NFC_LEADERS: |" + self.nfc_leaders[1] + "|")
-      				print("NFC_LEADERS: |" + self.nfc_leaders[2] + "|")
-      				print("NFC_LEADERS: |" + self.nfc_leaders[3] + "|")
+				print("NFC_LEADERS: |" + self.nfc_leaders[0] + "|")
+				print("NFC_LEADERS: |" + self.nfc_leaders[1] + "|")
+				print("NFC_LEADERS: |" + self.nfc_leaders[2] + "|")
+				print("NFC_LEADERS: |" + self.nfc_leaders[3] + "|")
 		#elif "THE MOST LIKELY AFC LEADERS ARE:" in line:
-		elif(line.find("THE MOST LIKELY AFC LEADERS ARE:") > -1):
+		elif "THE MOST LIKELY AFC LEADERS ARE:" in line:
 			self.afc_leaders = parse_leaders(line)
 			if(debug == True):
-      				print("AFC_LEADERS: |" + self.afc_leaders[0] + "|")
-      				print("AFC_LEADERS: |" + self.afc_leaders[1] + "|")
-      				print("AFC_LEADERS: |" + self.afc_leaders[2] + "|")
-      				print("AFC_LEADERS: |" + self.afc_leaders[3] + "|")
+				print("AFC_LEADERS: |" + self.afc_leaders[0] + "|")
+				print("AFC_LEADERS: |" + self.afc_leaders[1] + "|")
+				print("AFC_LEADERS: |" + self.afc_leaders[2] + "|")
+				print("AFC_LEADERS: |" + self.afc_leaders[3] + "|")
 		#elif "THE MOST LIKELY NFC WILD CARD TEAMS ARE ") in line:
-		elif(line.find("THE MOST LIKELY NFC WILD CARD TEAMS ARE") > -1):
+		elif "THE MOST LIKELY NFC WILD CARD TEAMS ARE" in line:
 			self.nfc_wildcards = parse_wildcards(line)
 			if(debug == True):
 				print("NFC_WILDCARDS: |" + self.nfc_wildcards[0] + "|")
 				print("NFC_WILDCARDS: |" + self.nfc_wildcards[1] + "|")
-		#elif "THE MOST LIKELY AFC WILD CARD TEAMS ARE " in line:
-		elif(line.find("THE MOST LIKELY AFC WILD CARD TEAMS ARE") > -1):
+		elif "THE MOST LIKELY AFC WILD CARD TEAMS ARE" in line:
 			self.afc_wildcards = parse_wildcards(line)
 			if(debug == True):
 				print("AFC_WILDCARDS: |" + self.afc_wildcards[0] + "|")
 				print("AFC_WILDCARDS: |" + self.afc_wildcards[1] + "|")
 		#elif "THE NFC CHAMPION SHOULD BE" in line:
-		elif(line.find("THE NFC CHAMPION SHOULD BE") > -1):
-			line = line.replace("THE AFC CHAMP", ",");
+		elif "THE NFC CHAMPION SHOULD BE" in line:
+			# THE NFC CHAMPION SHOULD BE S FRANCISCO   THE AFC CHAMP KANSAS CITY
+			exp = re.compile(r"THE NFC CHAMPION SHOULD BE\s+(.+)\s+THE AFC CHAMP\s+(.+)")
+			self.nfc_superbowl, self.afc_superbowl = exp.findall(line)[0]
+			self.nfc_superbowl = self.nfc_superbowl.strip()
+			self.afc_superbowl = self.afc_superbowl.strip()
+			"""line = line.replace("THE AFC CHAMP", ",");
 			i = line.index(" BE ") + 3
 			j = line.index(',')
 			self.nfc_superbowl = line[i+1:j-1].strip()
-			self.afc_superbowl = line[j+1:-1].strip()
+			self.afc_superbowl = line[j+1:-1].strip()"""
 			if(debug == True):
 				print("NFC_SUPERBOWL: |" + self.nfc_superbowl + "|")
 				print("AFC_SUPERBOWL: |" + self.afc_superbowl + "|")
 		#elif "FAVORED BY" in line:
-		elif(line.find("FAVORED BY") > -1):
-			print(line)
-			parts = line.strip().split();
-			self.winning_margin = parts[2];
-			i = line.index(" BE ") + 3;
-			#j = line.index(' .');
-			j = line.index('.');
-			self.super_bowl_champ = line[i+1:j-1].strip();
+		elif "FAVORED BY" in line:
+			# FAVORED BY  7 POINTS, THE SUPER BOWL CHAMP WILL BE S. FRANCISCO.
+   			# Use regular expressions to parse this line FAVORED BY  7 POINTS, THE SUPER BOWL CHAMP WILL BE S. FRANCISCO.
+			exp = re.compile(r" FAVORED BY\s+(\d+)\s+POINTS THE SUPER BOWL CHAMP WILL BE\s+(.+)\.")
+			self.winning_margin, self.super_bowl_champ = exp.findall(line)[0]
+			self.winning_margin = self.winning_margin.strip()
+			self.super_bowl_champ = self.super_bowl_champ.strip()
 			if(debug == True):
 				print("SUPERBOWL CHAMP: " + self.super_bowl_champ + ", Winning margin: " + self.winning_margin)
 
