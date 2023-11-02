@@ -1,0 +1,33 @@
+#!/bin/bash
+
+if [ "$#" -ne 2 ]; then
+    echo "Illegal number of parameters, provide year and week"
+    echo "Syntax:"
+    echo "$0 <year> <week>"
+    exit 1
+fi
+
+year=$1
+week=$2
+
+echo "Fixing for $year, week $week"
+
+cmd="./stats.py $year $week"
+echo $cmd
+$cmd
+
+cmd="convert $year $week"
+echo $cmd
+$cmd
+
+cmd="weekly_data $year $week"
+echo $cmd
+$cmd
+
+cmd="weekly2db.py $year $week"
+echo $cmd
+$cmd
+
+cmd="./predict.py $year $week"
+echo $cmd
+$cmd
