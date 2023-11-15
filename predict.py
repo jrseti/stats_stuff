@@ -43,12 +43,13 @@ def parse_leaders(line):
 def parse_wildcards(line):
 
 	wildcards = []
- 
+
 	parts = line.split('ARE')
-	parts = parts[1].split('AND')
+ 	# The space before "AND" is important, to catch case of "CLEVELAND" and "AND" in the same line
+	parts = parts[1].split(' AND')
 	wildcards.append(parts[0].strip())
 	wildcards.append(parts[1].strip())
- 
+
 	return wildcards
 
 class PredictPost:
