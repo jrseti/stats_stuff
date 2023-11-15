@@ -18,40 +18,19 @@ def get_report(year, week):
 	return text
 
 def parse_leaders(line):
-	#print(line)
-	leaders = []
 
-	line = line.replace("AND", "")
-	i = line.index(':')
-	j = line.index('(')
-	leaders.append(line[i+1:j-1].strip())
-	line = line[j+1:-1]
-	i = line.index(')')
-	j = line.index('(')
-	leaders.append(line[i+1:j-1].strip())
-	line = line[j+1:-1]
-	i = line.index(')')
-	j = line.index('(')
-	leaders.append(line[i+1:j-1].strip())
-	line = line[j+1:-1]
-	i = line.index(')')
-	j = line.index('(')
-	leaders.append(line[i+1:j-1].strip())
+ 	# Use regex to parse the numbers from a string like THE MOST LIKELY NFC LEADERS ARE: PHILADELPHIA (12- 4), DETROIT      (12- 4)NEW ORLEANS  ( 9- 7) AND S. FRANCISCO (12- 4)
+	exp = re.compile(r"\b([A-Z][A-Z.\'\s]+)\s*\(\s*\d+\s*-\s*\d+\s*\)")
+	line = line.replace(" AND ", " ") # remove AND, there is an AND before the last team
+	return [exp.findall(line)[i].strip() for i in range(4)]
 
-	return leaders
+def parse_wildcards(line: str) -> list:
 
-def parse_wildcards(line):
-
-	wildcards = []
-
-	parts = line.split('ARE')
- 	# The space before "AND" is important, to catch case of "CLEVELAND" and "AND" in the same line
-	parts = parts[1].split(' AND')
-	wildcards.append(parts[0].strip())
-	wildcards.append(parts[1].strip())
-
-	return wildcards
-
+ 	# Use regex to parse out the team names from THE MOST LIKELY AFC WILD CARD TEAMS ARE CLEVELAND    AND PITTSBURGH
+	exp = re.compile(r"ARE\s+(.+)\s+AND\s+(.+)")
+	wildcards = exp.findall(line)[0]
+	return [wc.strip() for wc in wildcards]
+ 
 class PredictPost:
 
 	def __init__(self, year, week):
@@ -107,11 +86,6 @@ class PredictPost:
 			self.nfc_superbowl, self.afc_superbowl = exp.findall(line)[0]
 			self.nfc_superbowl = self.nfc_superbowl.strip()
 			self.afc_superbowl = self.afc_superbowl.strip()
-			"""line = line.replace("THE AFC CHAMP", ",");
-			i = line.index(" BE ") + 3
-			j = line.index(',')
-			self.nfc_superbowl = line[i+1:j-1].strip()
-			self.afc_superbowl = line[j+1:-1].strip()"""
 			if(debug == True):
 				print("NFC_SUPERBOWL: |" + self.nfc_superbowl + "|")
 				print("AFC_SUPERBOWL: |" + self.afc_superbowl + "|")
@@ -152,27 +126,27 @@ class PredictInfo:
 
 	def __init__(self, year, week, team_num, line1, line2):
 
-		self.year = year;
+		self.year = year
 		self.week = week + 1
 		self.team_num = team_num
 		
-		line1 = line1.replace( "- ", "-");
-		line2 = line2.replace( "- ", "-");
-		line1 = line1.replace( "+ ", "+");
-		line2 = line2.replace( "+ ", "+");
-		line2 = line2[24:-1];
-		line1 = line1.strip();
-		line2 = line2.strip();
+		line1 = line1.replace( "- ", "-")
+		line2 = line2.replace( "- ", "-")
+		line1 = line1.replace( "+ ", "+")
+		line2 = line2.replace( "+ ", "+")
+		line2 = line2[24:-1]
+		line1 = line1.strip()
+		line2 = line2.strip()
 
-		line1Parts = line1.split();
-		montePart = line1Parts[len(line1Parts) - 2];
-		self.montePredicts = montePart.split("-");
+		line1Parts = line1.split()
+		montePart = line1Parts[len(line1Parts) - 2]
+		self.montePredicts = montePart.split("-")
 
-		line2Parts = line2.split();
-		regularPart = line2Parts[len(line2Parts) - 2];
-		self.regularPredicts = regularPart.split("-");
+		line2Parts = line2.split()
+		regularPart = line2Parts[len(line2Parts) - 2]
+		self.regularPredicts = regularPart.split("-")
 
-		self.nextWeekScore = int(line2Parts[week]);
+		self.nextWeekScore = int(line2Parts[week])
 
 	def to_sql(self):
 
