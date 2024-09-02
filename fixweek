@@ -12,9 +12,9 @@ week=$2
 
 echo "Fixing for $year, week $week"
 
-cmd="./stats.py $year $week"
-echo $cmd
-$cmd
+#cmd="./stats.py $year $week"
+#echo $cmd
+#$cmd
 
 cmd="convert $year $week"
 echo $cmd
@@ -28,6 +28,6 @@ cmd="weekly2db.py $year $week"
 echo $cmd
 $cmd
 
-cmd="./predict.py $year $week"
-echo $cmd
-$cmd
+#cmd="./predict.py $year $week"
+#echo $cmd
+#$cmd

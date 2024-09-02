@@ -13,7 +13,7 @@ from config import FTP_HOST, FTP_USER, FTP_PASSWD
 SEASON = "Reg"
 #SEASON = "Ps"
 
-YEAR = 2023
+YEAR = 2024
 STATS_DIR = os.path.join(os.getcwd(), "stats")
 
 def print_help():

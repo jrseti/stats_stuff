@@ -27,7 +27,7 @@ int main(int argc, char *argv[])
 	weekly_team_data += to_string(year);
 	weekly_team_data += ", ";
     weekly_team_data += to_string(week);//POST SEASON ONLY COMMENT THIS OUT
-	//weekly_team_data += "19";//ADD IN FOR POST SEASON POST SEASON ONLY
+	//weekly_team_data += "20";//ADD IN FOR POST SEASON POST SEASON ONLY (dont need to do this anymore!)
 	weekly_team_data += ", ";
 
 	string team_data = weekly_team_data;

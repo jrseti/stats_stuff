@@ -142,10 +142,16 @@ class PredictInfo:
 		montePart = line1Parts[len(line1Parts) - 2]
 		self.montePredicts = montePart.split("-")
 
+		print(line2)
+  
 		line2Parts = line2.split()
+		print(line2Parts)
 		regularPart = line2Parts[len(line2Parts) - 2]
 		self.regularPredicts = regularPart.split("-")
 
+		if week >= 17:
+			self.nextWeekScore = int(line2Parts[-3])
+			return
 		self.nextWeekScore = int(line2Parts[week])
 
 	def to_sql(self):
