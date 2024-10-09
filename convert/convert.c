@@ -25,13 +25,18 @@ FILE     *fp_out;  /* File pointer for Buds output stat file.  */
 FILE     *fp_data; /* File pointer for the "convert.dat" file. */
 FILE     *fp_trace;/* File pointer for "trace.dat" file.       */
 
-int debug;
 char input_filename[1024];
 char stats_directory[1024];
 char temp_filename[1024];
 
 int year;
 int week;
+
+#define DEBUG 1
+#define TEAMS_PER_PAGE 11
+#define NUM_PAGES 3
+
+#define NUM_VARS 78
 
 typedef struct _Info
   {
@@ -42,7 +47,7 @@ typedef struct _Info
     char  tlist[40][10][16];
 			 /* Team names that are recognized in the NFL stat */
 
-    int   vorder[76];    /* order of the variables teams as they appear in */
+    int   vorder[NUM_VARS+1];    /* order of the variables teams as they appear in */
 			 /* the NFL STATS file read in.                    */
     int   week;          /* Week number read in from the NFL stats input.  */
     char  day[16];       /* Week Day read in from the NFL stats input.     */
@@ -63,12 +68,14 @@ typedef struct _Info
 
 Info info;
 
+
+
 typedef struct _TeamData
   {
     int w;         /* Wins for a team.   */
     int l;         /* Losses for a team. */
     int t;         /* Ties for a team.   */
-    float v[75];   /* Variable for a team. */
+    float v[NUM_VARS];   /* Variable for a team. */
     char  tmm[6];  /* Team minutes read in from the NFL Stats .      */
   } TeamData;
 
@@ -85,10 +92,7 @@ void WriteNewStatFile(char *statsdir);
 /* This is the main routine.  Live long and enjoy. */
 /***************************************************/
 
-unsigned int main(argc, argv)
-    unsigned int argc;     /* Command line argument count.      */
-    char         *argv[];  /* Pointers to command line args.    */
-
+unsigned int main(unsigned int argc, char *argv[])
 {
   char  string[256];
   char  dummy[256];
@@ -114,23 +118,19 @@ unsigned int main(argc, argv)
   /****************************************/
 
   if((argc < 2) || (strcmp(argv[1], "-h") == 0) ||
-    (strcmp(argv[1], "help") == 0))
-      {
-	fprintf(stderr,"\n**********************************************\n");
-	fprintf(stderr,"\n convert syntax:\n");
-	fprintf(stderr,"\n     convert <year> <week> ");
-	fprintf(stderr,"\n               or for this message:");
-	fprintf(stderr,"\n     convert help\n\n");
-	fprintf(stderr,"\n Example:\n\n     convert in\n");
-	fprintf(stderr,"\n**********************************************\n\n");
-	exit(0);
-      }
+    (strcmp(argv[1], "help") == 0)) {
+      fprintf(stderr,"\n**********************************************\n");
+      fprintf(stderr,"\n convert syntax:\n");
+      fprintf(stderr,"\n     convert <year> <week> ");
+      fprintf(stderr,"\n               or for this message:");
+      fprintf(stderr,"\n     convert help\n\n");
+      fprintf(stderr,"\n Example:\n\n     convert in\n");
+      fprintf(stderr,"\n**********************************************\n\n");
+      exit(0);
+  }
 
-  debug = 1;
-  //strcpy(input_filename,argv[1]);
   year = atoi(argv[1]);
   week = atoi(argv[2]);
-
 
   sprintf(input_filename,"%s/%d/Week%02d/entirestats.txt",statsdir, year,week);
 
@@ -280,8 +280,7 @@ printf("\nHERE 3");
   /* played yet.                                                 */
   /***************************************************************/
 /* FIRST WEEK THURS comment out*/
-  if(strncasecmp(info.day,"mon",3))
-    {
+  if(strncasecmp(info.day,"mon",3)) {
       printf("\n\n Enter the number of the first team that plays on Monday Night(1 thru %d). . .",info.team_count);
       fgets(string, sizeof(string), stdin);
       //gets(string);clear
@@ -293,7 +292,6 @@ printf("\nHERE 3");
 
       printf("\n\n You entered teams %d and %d. Thank You!",
 	     info.monday1,info.monday2);
-
     }
 
 //printf("\nHERE 5");
@@ -326,7 +324,7 @@ printf("\nHERE 3");
   /********************************************************/
 
  
- total_pages=5; //Regular
+ total_pages=3; //Regular
  // total_pages=4; //first week, 2 teams on Monday, only 4 pages.
  // total_pages=2;//MODIFIED FOR POST SEASON
   //total_pages = 1; //Modified for first week on Thurs only one team playing
@@ -337,35 +335,36 @@ printf("\nHERE 3");
   //for(page=1;page<=4;page++) //Use this one, first week, monday
 
   //for(page=1;page<=2;page++)//POST
- for(page=1;page<=total_pages;page++)//MODIFIED FOR POST SEASON
-    {
+  for(page=1;page<=total_pages;page++)//MODIFIED FOR POST SEASON
+  {
 	  
-printf("\nHERE, page %d",page);
- sleep(1);
-      /***********************************************/
-      /* Find the top of the next page.              */
-      /* read in the line containing the team names. */
-      /***********************************************/
-      fgets(string, 128, fp_in);
+    printf("\nHERE, page %d\n",page);
+    sleep(1);
+    /***********************************************/
+    /* Find the top of the next page.              */
+    /* read in the line containing the team names. */
+    /***********************************************/
+    fgets(string, 128, fp_in);
 
 	  printf("%s\n", string);
-    while(strncasecmp(string,"PAGE",4) && strncasecmp(string,"OFFE",4))
-		  fgets(string, 128, fp_in);
-	
+    while(strncasecmp(string,"PAGE",4) && strncasecmp(string,"OFFE",4)) {
+      fgets(string, 128, fp_in);
+    }
 
-    if(debug)
+    if(DEBUG) {
 	    printf("\n\n Reading Page %d\n%s\n",page,string);
+    }
 
-      /****************************************************/
-      /* Find the indices of the team group on this page. */
-      /****************************************************/
+    /****************************************************/
+    /* Find the indices of the team group on this page. */
+    /****************************************************/
 
-      jstart = (page-1)*8;
-      jstop  = page*8-1;
+    jstart = (page-1)*TEAMS_PER_PAGE;
+    jstop  = page*TEAMS_PER_PAGE-1;
 
 	  
-      if(page == total_pages) /* Last page. */
-	{
+    if(page == total_pages) /* Last page. */
+	  {
 		  //jstop = 28;
 	 // jstart = (total_pages-1)*8;
  	 // jstop  = info.team_count-1;
@@ -381,10 +380,10 @@ printf("\nHERE, page %d",page);
 	   //   jstart = jstart + 2;
 	   // }
 	//	  jstop = 11;
-	}
+	  }
 
-	  jstart = (page-1)*8;
-      jstop  = page*8-1;
+	  jstart = (page-1)*TEAMS_PER_PAGE;
+    jstop  = page*TEAMS_PER_PAGE-1;
 	  //jstop = 11;
 	  //MODIFIED FOR POST SEASON GAMES
 	  
@@ -404,44 +403,50 @@ printf("\nHERE, page %d",page);
 	  jstart=0;
 		  jstop=1;
 */
-	  if(page==5)jstop = 32; //Regular season!
+  if(page == NUM_PAGES) {
+    jstop = 32; //Regular season!
+  }
 
 	  //if(page == 4) jstop = 30; //first week, monday, JRXX
 
 	  //FIRST WEEK Monday morning, 2 teams missing.
 	  //if(page==4)jstop=30;
 
-      /***********************************/
-      /* Find out which teams these are. */
-      /***********************************/
+  /***********************************/
+  /* Find out which teams these are. */
+  /***********************************/
 
 
-      /****************************************************************/
-      /* Sort thru the line and figure out which team numbers are for */
-      /* each column.                                                 */
-      /****************************************************************/
+  /****************************************************************/
+  /* Sort thru the line and figure out which team numbers are for */
+  /* each column.                                                 */
+  /****************************************************************/
 
-      /* Read past the word OFFENSE, up to the first team name. */
-      strtok(string," ");
+  /* Read past the word OFFENSE, up to the first team name. */
+  char *temp_pp;
+  temp_pp = strtok(string," ");
 
-      for(j=jstart;j<=jstop;j++)
+  if(DEBUG) {
+    fprintf(fp_trace, "Team list: %s\n", temp_pp);
+  }
+
+  for(j=jstart;j<=jstop;j++)
 	{
-		  char *pp;
-		  pp= strtok(NULL," \r\n\0");
-	   strcpy(dummy,pp);
-	   printf("TEAM = %s\n",dummy);
-	   fprintf(fp_trace,"***TEAM NAME %s\n",dummy);
-	   for(i=0;i<info.team_count;i++)
-	     for(m=0;m<10;m++)
-	       if(info.tlist[i][m][0]!=0)
-		   {
-			if(!strncasecmp(dummy,info.tlist[i][m],4))
-			{
-				info.torder[j]=i;
-				fprintf(fp_trace,"TORDER %d, %s\n",i+1,info.tlist[i][m]);
-				
-			}
-		   }
+    char *pp;
+    pp= strtok(NULL," \r\n\0");
+    strcpy(dummy,pp);
+    printf("TEAM = %s\n",dummy);
+    fprintf(fp_trace,"***TEAM NAME %s\n",dummy);
+    for(i=0;i<info.team_count;i++) {
+      for(m=0;m<10;m++) {
+        if(info.tlist[i][m][0]!=0){
+          if(!strncasecmp(dummy,info.tlist[i][m],4)) {
+            info.torder[j]=i;
+            fprintf(fp_trace,"TORDER %d, %s\n",i+1,info.tlist[i][m]);
+          }
+        }
+      }
+    }
 
 	   if(info.torder[j] == -1)
 	     {
@@ -459,25 +464,26 @@ printf("\nHERE, page %d",page);
       /* Read in the variables on this page. */
       /***************************************/
 
-      for(m=1;m<75;m++)
+      for(m=1;m<NUM_VARS;m++)
 	{
-	  fprintf(fp_trace,"vorder[%d] = %d, \n", m,
+	  fprintf(fp_trace,"TOP: vorder[%d] = %d, \n", m,
 		      info.vorder[m]);
 
-	  if(m == 1)
-	    {
-	      /* Read in the Win-Lost-Tie string. */
-	      fgets(string, 128, fp_in);
-		  if(strstr(string,"------")!=NULL)
-			  fgets(string, 128, fp_in); /* Read past a line of ----- */
-	      if(!strncasecmp(string,"-MORE-",6))fgets(string, 128, fp_in);
+    if(m == 1)
+    {
+      /* Read in the Win-Lost-Tie string. */
+      fgets(string, 128, fp_in);
+      if(strstr(string,"------")!=NULL) {
+        fgets(string, 128, fp_in); /* Read past a line of ----- */
+      }
+	    if(!strncasecmp(string,"-MORE-",6))fgets(string, 128, fp_in);
 	    //  fprintf(fp_trace,"Page %d, var %d, \n%s",page,m,string);
 
-	      /* Parse it up. */
-	      k = 16;
-	      for(i=jstart;i<=jstop;i++)
-		
-		  {
+      /* Parse it up. */
+      //k = 16; Starting 2024 the Won-Loss is WLT
+      //k = 14;
+      k = strlen("GAMES (W-L-T)");
+      for(i=jstart;i<=jstop;i++) {
 		  while((k<(int)strlen(string))&&(string[k] !=  ' '))k++;
 		  while((k<(int)strlen(string))&&(string[k] ==  ' '))k++;
 		  if(k<(int)strlen(string))
@@ -499,7 +505,7 @@ printf("\nHERE, page %d",page);
 		  data[info.torder[i]].v[1]=data[info.torder[i]].w+
 					     data[info.torder[i]].l+
 					     data[info.torder[i]].t;
-		  fprintf(fp_trace,"%d %d %d\n", data[info.torder[i]].w,
+		  fprintf(fp_trace,"WLT: %d %d %d\n", data[info.torder[i]].w,
 					     data[info.torder[i]].l,
 					     data[info.torder[i]].t );
 
@@ -511,8 +517,10 @@ printf("\nHERE, page %d",page);
 	    {
 	      /* Dont use this line, just read past it. */
 	      fgets(string, 128, fp_in);
+        fprintf(fp_trace, "\n***\nRead past: %s***\n", string);
 	      if(!strncasecmp(string,"-MORE-",6))fgets(string, 128, fp_in);
-	      fprintf(fp_trace,"Page %d, var %d, \n%s",page,m,string);
+	      //fprintf(fp_trace,"Page %d, var %d, \n%s",page,m,string);
+        continue;
 	    }
 	  else if(info.vorder[m] == 40)
 	    {
@@ -525,11 +533,17 @@ printf("\nHERE, page %d",page);
 
 	      for(i=jstart;i<=jstop;i++)
 		{
-		  if(i==jstart)
-		    data[info.torder[i]].v[40] = atol(strtok(string+16," /"));
-		  else
-		    data[info.torder[i]].v[40] = atol(strtok(NULL," /"));
-		  data[info.torder[i]].v[41]   = atol(strtok(NULL," /"));
+ 
+      if(i != 32) {
+        if(i==jstart) {
+          //2024 they changed FIELD GOALS/FGA to FIELD GOALS MADE/ATTEMPTED
+          data[info.torder[i]].v[40] = atol(strtok(string+26," /"));
+        }
+        else {
+          data[info.torder[i]].v[40] = atol(strtok(NULL," /"));
+        }
+        data[info.torder[i]].v[41]   = atol(strtok(NULL," /"));
+      }
 		}
 	    }
 	  else if(info.vorder[m] == 98)
@@ -627,8 +641,16 @@ fprintf(fp_trace,"Data team %d, var %d = %f\n",info.torder[i]+1,info.vorder[m]+1
 
   for(i=0;i<info.team_count;i++)
     {
+      fprintf(fp_trace,"\nPRE V8:%f, %f, %f\n", 
+              data[info.torder[i]].v[8],
+              data[info.torder[i]].v[6],
+              data[info.torder[i]].v[7]);
       data[info.torder[i]].v[8]=
-	data[info.torder[i]].v[6]-data[info.torder[i]].v[7];
+	      data[info.torder[i]].v[6]-data[info.torder[i]].v[7];
+      fprintf(fp_trace,"\nPOST V8:%f, %f, %f\n", 
+              data[info.torder[i]].v[8],
+              data[info.torder[i]].v[6],
+              data[info.torder[i]].v[7]);
     }
 
    fprintf(fp_trace,"\nDONE doing var 8\n");
@@ -693,7 +715,7 @@ fprintf(fp_trace,"Data team %d, var %d = %f\n",info.torder[i]+1,info.vorder[m]+1
 		  //i=info.team_count-1;
 		  strcpy(info.tnam[i],info.tnam[j]);
 		  data[i].t+=1;
-		  for(k=2;k<75;k++)
+		  for(k=2;k<NUM_VARS;k++)
 			 data[i].v[k]=data[info.team_count-1].v[k];
 		  data[i].v[1]+=1;
 		}
@@ -702,7 +724,7 @@ fprintf(fp_trace,"Data team %d, var %d = %f\n",info.torder[i]+1,info.vorder[m]+1
 		 // i=info.team_count-1;
 		  strcpy(info.tnam[i],info.tnam[j]);
 		  data[i].t+=1;
-		  for(k=2;k<75;k++)
+		  for(k=2;k<NUM_VARS;k++)
 			 data[i].v[k]=data[info.team_count-1].v[k];
 		  data[i].v[1]+=1;
 		}
@@ -741,7 +763,7 @@ fprintf(fp_trace,"Data team %d, var %d = %f\n",info.torder[i]+1,info.vorder[m]+1
 	  strcpy(info.tnam[i],info.tnam[j]);
 	}
 	*/
-     fprintf(fp_trace,"\nHERE 6\n");
+     //fprintf(fp_trace,"\nHERE 6\n");
      /******************************************/
      /* Average the monday missing teams data. */
      /******************************************/
@@ -775,7 +797,7 @@ fprintf(fp_trace,"Data team %d, var %d = %f\n",info.torder[i]+1,info.vorder[m]+1
 	if((info.sched[i][0]==0)&& (info.week==1))//If week 1 and team not playing..
 	{
 		data[i].w=data[i].l=data[i].t=0;
-		for(k=0;k<75;k++)
+		for(k=0;k<NUM_VARS;k++)
 			 data[i].v[k]=0;
 		strcpy(data[i].tmm,"\0");
 		data[i].v[1]=1;
@@ -933,7 +955,7 @@ fprintf(fp_trace,"Data team %d, var %d = %f\n",info.torder[i]+1,info.vorder[m]+1
 	data[i].tmm,
 	info.tnam[i],
 	info.year-2000);
-	fprintf(fp_trace,"\nHERE 7\n");
+	//fprintf(fp_trace,"\nHERE 7\n");
     }
 
   /**********/

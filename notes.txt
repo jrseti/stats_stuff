@@ -1,2 +1,4 @@
 ./convert/convert 2022 4
 
+OPP YARDS GAINED (tot) to "OPP YARDS GAINED"
+W-L-T to WLT

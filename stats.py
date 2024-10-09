@@ -218,7 +218,7 @@ os.chdir(os.path.expanduser("%s/%d/Week%02d" % (STATS_DIR, year, week)))
 week_dir = os.getcwd()
 print("Output directory will be %s" % week_dir)
 
-get_stat_files(year, week)
+#get_stat_files(year, week)
 
 entire_stats_rtf_to_txt(year, week)
 

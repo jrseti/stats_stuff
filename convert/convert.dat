@@ -15,34 +15,34 @@ c:
 
    NOTE 2: A "*" is to be interpreted as a space!
 
-1  Atlanta Atl.  
-2  Indianapolis Ind.
-3  Buffalo Buff
-4  Chicago Chi.
-5  Cincinatti Cin.
+1  Atlanta Atl. ATL
+2  Indianapolis Ind. IND
+3  Buffalo Buff BUF
+4  Chicago Chi. CHI
+5  Cincinatti Cin. CIN
 6  Baltimore Balt Balt. Bal
-7  Dallas Dall Dal.
-8  Denver Denv Den. Denv.
-9  Detroit Det.
-10 Green*Bay G.B.
-11 Tenn Tenn.
-12 Kansas*City K.C.
-13 St*Louis*Rams Rams stl STL St.L. ST.L. L.A. LA-R
-14 Miami Mia. MIA. mia. Miami
-15 Minnesota Minn Minn.
-16 New*England N.E.
-17 New*Orleans N.O.
+7  Dallas Dall Dal. DAL
+8  Denver Denv Den. Denv. DEN
+9  Detroit Det. DET
+10 Green*Bay G.B. GB
+11 Tenn Tenn. TEN
+12 Kansas*City K.C. KC
+13 St*Louis*Rams Rams stl STL St.L. ST.L. L.A. LA-R LAR
+14 Miami Mia. MIA. mia. Miami MIA
+15 Minnesota Minn Minn. MIN
+16 New*England N.E. NE
+17 New*Orleans N.O. NO
 18 New*York*Giants NY-G NYG 
 19 New*York*Jets NY-J NYJ
-20 Raiders Rai. Oak. oak. oak OAK L.V.
-21 Philadelphia Phil Phi. Phil.
-22 Pittsburg Pitt Pitt.
+20 Raiders Rai. Oak. oak. oak OAK L.V. LV
+21 Philadelphia Phil Phi. Phil. PHI
+22 Pittsburg Pitt Pitt. PIT
 23 Phoenix Pho. Ari. ari ARI ari. ARI. ariz
-24 LA*Chargers LAC LA-C
-25 San*Francisco S.F.
-26 Seattle Sea.
-27 Tampa*Bay T.B.
-28 Washington Wash Wash.
+24 LA*Chargers LAC LA-C 
+25 San*Francisco S.F. SF
+26 Seattle Sea. SEA
+27 Tampa*Bay T.B. TB
+28 Washington Wash Wash. WAS
 29 Carolina Car car. Car.
 30 Jacksonville Jac Jax jax jac
 31 Cleveland Clev. Cle Clev Clv
@@ -173,15 +173,18 @@ c:
 54
 55
 56
+0
 57
 58
 60
 61
 62
 63
-64
+64   
+0     Not Used
 65
 66
+0     Not Used
 67
 68
 69
