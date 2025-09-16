@@ -225,7 +225,7 @@ if __name__== "__main__":
 	file.close()
 
 	print(f"Predictions for {year} week {week+1} written to {filepath}")
- 
+	
 	print("\nCopying to database")
 	cmd = PREDICT_SCP_CMD.replace("PREDICT_FILE", filepath)
 	print(cmd)
@@ -241,5 +241,6 @@ if __name__== "__main__":
 	cmd = PREDICT_DB_CMD_3
 	print(cmd)
 	os.system(cmd)
+ 
 
 

@@ -29,7 +29,7 @@ names = [
 	    ["PHI","PHILADELPHIA","Phil","Phi.","Phil."],
 	    ["PIT","PITTSBURGH","Pitt","Pitt."],
 	    ["ARI","ARIZONA","Phoenix","Pho.","ari.","ariz","Ariz."],
-	    ["LAC","L.A. CHARGERS","L A CHARGERS","LAC","LA-C","LA Chargers","L A Chargers"],
+	    ["LAC","L A CHARGERS","L A CHARGERS","LAC","LA-C","LA Chargers","L A Chargers"],
 	    ["SF","S. FRANCISCO","S.F."],
 	    ["SEA","SEATTLE","Sea."],
 	    ["TB","TAMPA BAY","T.B."],
