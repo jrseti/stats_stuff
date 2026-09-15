@@ -379,11 +379,11 @@ printf("\nHERE 3");
 	  //  {
 	   //   jstart = jstart + 2;
 	   // }
-		  jstop = 11;
+		  jstop = 13;
 	  }
 
-	  jstart = (page-1)*TEAMS_PER_PAGE;
-    jstop  = page*TEAMS_PER_PAGE-1;
+	  //jstart = (page-1)*TEAMS_PER_PAGE;
+    //jstop  = page*TEAMS_PER_PAGE-1;
 	  //jstop = 11;
 	  //MODIFIED FOR POST SEASON GAMES
 	  
@@ -430,6 +430,8 @@ printf("\nHERE 3");
     fprintf(fp_trace, "Team list: %s\n", temp_pp);
   }
 
+  printf("JSTART = %d, JSTOP=%d\n", jstart, jstop);
+
   for(j=jstart;j<=jstop;j++)
 	{
     char *pp;
@@ -437,6 +439,7 @@ printf("\nHERE 3");
     strcpy(dummy,pp);
     printf("TEAM = %s\n",dummy);
     fprintf(fp_trace,"***TEAM NAME %s\n",dummy);
+    printf("***TEAM NAME %s\n",dummy);
     for(i=0;i<info.team_count;i++) {
       for(m=0;m<10;m++) {
         if(info.tlist[i][m][0]!=0){
@@ -1221,7 +1224,7 @@ void GetSchedule()
     strcpy(schedsdir, p);
   }
   
-  sprintf(string,"scheds/sched_%d.txt",info.year);
+  sprintf(string,"scheds/sched_post_%d.txt",info.year);
   if (NULL == (fp = fopen(string, "r")))
     {
       printf("\nIn GetSchedule(). Could not open the file %s", string);

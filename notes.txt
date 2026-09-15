@@ -1,4 +1,10 @@
-./convert/convert 2022 4
+Create a Python script named "~/stats_stuff/bin/run.py" that takes 2
+parameters year and week and then runs the scripts below.
+In this list od scripts to run, replace 2026 with the year and 1 with the week. 
 
-OPP YARDS GAINED (tot) to "OPP YARDS GAINED"
-W-L-T to WLT
+prepare_stats.py 2026 1
+convert 2026 1
+weekly_data 2026 1
+weekly2db.py 2026 1
+zipup.py 2026 1
+email_stats.py 2026 1
